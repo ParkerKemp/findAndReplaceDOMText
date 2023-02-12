@@ -8,16 +8,16 @@
  * in the specified element.
  */
  (function (root, factory) {
-     if (typeof module === 'object' && module.exports) {
-         // Node/CommonJS
-         module.exports = factory();
-     } else if (typeof define === 'function' && define.amd) {
-         // AMD. Register as an anonymous module.
-         define(factory);
-     } else {
-         // Browser globals
-         root.findAndReplaceDOMText = factory();
-     }
+		 if (typeof module === 'object' && module.exports) {
+				 // Node/CommonJS
+				 module.exports = factory();
+		 } else if (typeof define === 'function' && define.amd) {
+				 // AMD. Register as an anonymous module.
+				 define(factory);
+		 } else {
+				 // Browser globals
+				 root.findAndReplaceDOMText = factory();
+		 }
  }(this, function factory() {
 
 	var PORTION_MODE_RETAIN = 'retain';
@@ -94,6 +94,7 @@
 	 * @param {RegExp} options.find The regular expression to match
 	 * @param {String|Element} [options.wrap] A NodeName, or a Node to clone
 	 * @param {String} [options.wrapClass] A classname to append to the wrapping element
+	 * @param {String} [options.onWrap] A callback function each time the wrapping element is applied
 	 * @param {String|Function} [options.replace='$&'] What to replace each match with
 	 * @param {Function} [options.filterElements] A Function to be called to check whether to
 	 *	process an element. (returning true = process element,
@@ -480,10 +481,10 @@
 		},
 
 		getPortionReplacementNode: function(portion, match) {
-
 			var replacement = this.options.replace || '$&';
 			var wrapper = this.options.wrap;
 			var wrapperClass = this.options.wrapClass;
+			var onWrapCallback = this.options.onWrap;
 
 			if (wrapper && wrapper.nodeType) {
 				// Wrapper has been provided as a stencil-node for us to clone:
@@ -521,6 +522,10 @@
 			}
 
 			el.appendChild(replacement);
+
+			if (wrapper && onWrapCallback) {
+				onWrapCallback(el);
+			}
 
 			return el;
 		},
